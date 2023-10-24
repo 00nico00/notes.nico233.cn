@@ -368,5 +368,38 @@ public IEnumerator GetEnumerator() {
 只要使用了 `foreach` ，迭代器块中的 `finally` 代码就会照常进行，因为调用其对象的 `Dispose` 方法，会触发迭代器块中的 `finally` 代码。而 `foreach` 则会在循环结束时调用对象的 `Dispose` 方法
 
 
-## 8 异步
+## 8 反射
+
+反射可以通过类名的字符串来创建类，可以通过函数名的字符串和属性名的字符串，来调用类下的函数和属性。
+
+### 8.1 访问或修改类型的实例、静态字段
+
+```csharp
+namespace csharp_test {
+	public class MyClass {
+		public int myField;
+		public static int myStaticField;
+	}
+}
+
+//访问或修改类型的实例字段myField
+MyClass myObj = new MyClass() { myField = 1 };
+Type myType = typeof(MyClass);                    // 获取类型
+Console.WriteLine(myType);                        // csharp_test.MyClass
+FieldInfo fieldInfo = myType.GetField("myField"); // 获取类型中指定的字段信息
+Console.WriteLine(fieldInfo);                     // Int32 myField
+int value = (int)fieldInfo.GetValue(myObj);
+Console.WriteLine(value);                         // 1
+fieldInfo.SetValue(myObj, 2);                     // 给实例字段赋值
+
+//访问或修改类型的静态字段 myStaticField
+Type myType = typeof(MyClass);
+FieldInfo staticFieldInfo = myType.GetField("myStaticField");
+Console.WriteLine(staticFieldInfo.GetValue(null)); // 0
+staticFieldInfo.SetValue(null, 2);
+Console.WriteLine(MyClass.myStaticField);          // 2
+
+
+```
+
 
