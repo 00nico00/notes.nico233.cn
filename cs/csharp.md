@@ -456,3 +456,57 @@ MethodInfo staticMethodInfo = myType.GetMethod("MyStaticFunc");
 staticMethodInfo.Invoke(null, new object[] { 20 });
 // call MyStaticFunc, parameter: 20
 ```
+
+### 8.4 调用类型的构造函数同时创建实例
+
+```csharp
+namespace csharp_test {
+	public class MyClass {
+		public MyClass() {
+            Console.WriteLine("constructor MyClass()");
+        }
+
+		public MyClass(int num) {
+            Console.WriteLine($"construct MyClass(int), num: {num}");
+        }
+	}
+}
+
+// 调用无参的构造函数
+Type myType = typeof(MyClass);
+// 获取类型中指定的构造函数信息，传入该构造函数的参数列表的类型数组，无参传空数组
+ConstructorInfo constructorInfo = myType.GetConstructor(new Type[] { });
+var myObj = constructorInfo.Invoke(null) as MyClass; // 无参传入 null
+// constructor MyClass()
+
+// 调用有参的构造函数
+Type myType = typeof(MyClass);
+ConstructorInfo constructorInfo = myType.GetConstructor(new Type[] { typeof(int) });
+var myObj = constructorInfo.Invoke(new object[] { 20 }) as MyClass;
+// construct MyClass(int), num: 20
+```
+
+### 8.5 类型信息
+
+类型信息（ `Type Information` ）用来表示类型声明的信息，通过抽象基类 `System.Type` 的实例化对象存储这些信息。当使用反射的时候，`CLR` 获取指定类型的 `Type` 对象，通过这个对象就能访问该类型的任何信息
+以下是几种获取指定类型 `Type` 对象的方法：
+```csharp
+MyType myobj = new Mytype();
+
+// 1
+Type myType = typeof(myobj);
+
+// 2
+Type myType = myobj.GetType();
+
+// 3
+Type myType = Type.GetType("MyType"); // 如果有命名空间，需要在类名前加上
+
+// 4
+// 其中 assembly 是当前程序集实例
+Assembly assembly = Assembly.GetExecutingAssembly();
+Type t = assembly.GetType("csharp_test.MyClass");
+```
+
+有以下几点注意：
++ 

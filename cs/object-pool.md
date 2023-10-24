@@ -1,4 +1,4 @@
-## 一个基本的实现初始化和重置功能的对象池
+## 1 一个基本的实现初始化和重置功能的对象池
 
 ```csharp
 public sealed class ObjectPool<T>  
@@ -45,7 +45,7 @@ public sealed class ObjectPool<T>
 + 采用了延迟策略，只有在调用 `New` 的时候才会初始化或者重置对象
 
 
-## 被管理类型自重置的池
+## 2 被管理类型自重置的池
 
 对于上面那个对象池，我们将其初始化和重置操作和对象本身分离了，造成了紧耦合，因此可以使用一个 `IResetable` 接口，使得类型 `T` 可以由本身初始化或者重置
 
@@ -88,7 +88,7 @@ public sealed class ObjectPool<T>
 ```
 
 
-##  使用 Dictionary 和 List 实现的对象池
+## 3 使用 Dictionary 和 List 实现的对象池
 
 ```csharp
 public sealed class GameObjectPool : MonoBehaviour  
