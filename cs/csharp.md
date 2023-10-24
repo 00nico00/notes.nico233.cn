@@ -524,11 +524,11 @@ Type t = assembly.GetType("csharp_test.MyClass");
 
 ### 9.2 内存释放
 
-垃圾回收器通过检查应用程序的 `root` 来确定不再使用的对象。应用程序的 `root` 包括线程堆栈上的静态字段，局部变量，`CPU` 寄存器，`GC` 句柄和终结队列
+垃圾回收器通过检查应用程序的 `root` 来确定不再使用的对象。应用程序的 `root` 包括线程堆栈上的静态字段，局部变量，`CPU` 寄存器，`GC` 句柄和终结队列。垃圾回收器会创建一个图（ `Graph` ），其中包含所有可从这些 `root` 中访问的对象。
 ```csharp
 // 此处给出一些 root 的例子
 
-// 静态字段根
+// 静态字段
 class MyStaticClass {
     public static MyObject myObject = new MyObject();
 }
@@ -545,6 +545,8 @@ void MyMethod() {
 GCHandle handle = GCHandle.Alloc(new MyObject(), GCHandleType.Normal);
 
 // 终结队列
-// 在C#中，终结队列是用于对象终结（Finalization）的一种机制。当对象被终结时，它会从终结队列中被移除，不再被认为是根。它通常与终结方法一起使用，用于清理资源。
+// 在C#中，终结队列是用于对象终结（Finalization）的一种机制。
+// 当对象被终结时，它会从终结队列中被移除，不再被认为是根。
+// 它通常与终结方法一起使用，用于清理资源。
 ```
 
