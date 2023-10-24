@@ -516,5 +516,35 @@ Type t = assembly.GetType("csharp_test.MyClass");
 
 ## 9 gc
 
-### 9.1 Mark-Compact 标记压缩算法
+### 9.1 内存分配
+
+在了解垃圾回收之前，首先了解一下内存分配的基础知识。
+
+初始化新进程的时候，运行时会为进程保留一个连续的地址空间，称为**托管堆**。托管堆有维护着一个指针，这个指针会**指向下一个将在堆中分配的对象的地址**。**最开始这个指针指向托管堆的基址**。托管堆上部署了所有引用类型。当应用程序创建第一个引用类型的时候，将为托管堆的基址中的类型分配内存，同时，托管堆维护的指针指向紧接在前一个分配的对象后面的地址空间。只要还有足够的地址空间，运行时就会以这种方式一直为新对象分配空间。
+
+### 9.2 内存释放
+
+垃圾回收器通过检查应用程序的 `root` 来确定不再使用的对象。应用程序的 `root` 包括线程堆栈上的静态字段，局部变量，`CPU` 寄存器，`GC` 句柄和终结队列
+```csharp
+// 此处给出一些 root 的例子
+
+// 静态字段根
+class MyStaticClass {
+    public static MyObject myObject = new MyObject();
+}
+
+// 局部变量
+void MyMethod() {
+    MyObject myLocalObject = new MyObject();
+}
+
+// CPU 寄存器
+// CPU 寄存器通常是由运行时和操作系统管理
+
+// GC 句柄
+GCHandle handle = GCHandle.Alloc(new MyObject(), GCHandleType.Normal);
+
+// 终结队列
+// 在C#中，终结队列是用于对象终结（Finalization）的一种机制。当对象被终结时，它会从终结队列中被移除，不再被认为是根。它通常与终结方法一起使用，用于清理资源。
+```
 
