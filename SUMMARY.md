@@ -1,6 +1,6 @@
 # Table of contents
 
-*[👋你好](README.md)
+* [👋你好](README.md)
 
 ## 💻 计算机学习<a href="#cs" id="cs"></a>
 
