@@ -1,6 +1,6 @@
 ## 1 委托
 
-可以选择将委托类型看做只定义了一个方法的接口，将委托的实例看做实现了那个接口的一个对象，有点类似于 `c/c++` 中的函数指针，为了使委托去完成某种动作，必须满足4个条件
+委托就是一个密封类，其对象维护着一个可以引用一个或多个方法的字段，有点类似于 `c/c++` 中的函数指针，为了使委托去完成某种动作，必须满足4个条件
 + 声明委托类型
 + 必须有一个方法包含了要执行的代码
 + 必须创建一个委托实例
@@ -42,13 +42,78 @@ StringProcessor("input_string");
 StringProcessor.Invoke("input_string");
 ```
 
-委托实例实际有一个操作列表与之关联。这称为委托实例的**调用列表**（invocation list）
+委托实例实际有一个操作列表与之关联。这称为委托实例的**调用列表**（ `invocation list` ）
 `System.Delegate` 类型有两个静态方法负责此操作：
 + `Combine` : 负责将两个委托实例的调用列表连接到一起
 + `Remove` : 负责从一个委托实例中删除另一个实例的调用列表
 其实他们都是在**创建新的委托示例**，委托的实例是**不易变的**，同 `string` 的实例一样，注意，如果试图将 `null` 和委托实例合并到一起，`null` 将被视为带有空调用列表的一个委托
 
-## 2 值类型和引用类型
+### 1.1 委托的本质
+
+委托本质实际上是一个密封类，继承自 `MulticastDelegate` ，它内部维护了一个字段，该字段指向一个或多个方法。这个字段是一个代表方法的引用
++ `MulticastDelegate` ：即多播委托，一个委托可以装载多个相同签名的方法，委托被调用时，方法依次执行
+在 `System.Delegate` 当中有这四个成员变量
+
+```csharp
+internal object? _target; 
+
+internal object? _methodBase; 
+
+internal IntPtr _methodPtr;
+
+internal IntPtr _methodPtrAux;
+```
+
+其中，主要关注 `_target` 和 `_methodPtr` 两个数据成员
++ `_target` ：表示要调用的对象，如果委托表示**实例方法**，则为当前委托对其调用实例方法的对象；如果委托表示**静态方法**，则为 `null`
++ `_methodPtr` ：此变量的类型为 `IntPtr` ，在 `c#` 中是对指针的封装，一般来表示指针或者句柄，因此 `_methodPtr` 是一个指向将要调用的方法的指针
+
+## 2 事件
+
+事件就是一种特殊的委托，在委托实例化的时候加上 `event` 关键字即可声明一个事件
+```csharp
+public event EventHandler OnTrigger;
+
+// 此处的 EventHandler 就是个系统提供的委托类型
+public delegate void EventHandler(object? sender, EventArgs e);
+```
+
+事件通常要和类结合起来使用，因为其**只能在定义事件的类中被调用**。
+
+### 2.1 EventHandler & 订阅模式
+
+```csharp
+class Foo {
+	public event EventHandler<OnTriggerArgs> OnTrigger;
+
+	public class OnTriggerArgs : EventArgs {
+
+	}
+
+	public void Trigger() {
+		OnTrigger?.Invoke(this, new OnTriggerArgs());
+	}
+}
+
+class Bar {
+	private Foo foo = new Foo();
+
+	public Bar() {
+		foo.OnTrigger += Foo_OnTrigger;
+	}
+
+	private void Foo_OnTrigger(object? sender, Foo.OnTriggerArgs e) {
+		
+	}
+}
+```
+
+以上就是一个 `EventHandler` 类型事件的创建与调用：
++ `EventHandler` 的泛型类型参数就是需要传递的参数类型，必须继承自 `EventArgs`
++ 在调用其的时候，需要传入两个参数：`sender` 就是事件的发送者，`e` 就是传递进去的参数
++ 包含事件的类用于发布事件，称为发布器类，其他接受该事件的类称为订阅器类，事件使用发布-订阅模型
+
+## 3 值类型和引用类型
 
 通常，`class` 声明的是引用类型，`struct` 声明的是值类型，有以下几种特殊情况：
 + **数组**是引用类型，即使元素是值类型
@@ -64,7 +129,7 @@ StringProcessor.Invoke("input_string");
 + 值类型不可以派生出其他类型，因此值类型不需要额外的信息来描述**实际**是什么类型
 + 引用类型每个对象的开头都包含一个数据块，用于标明对象的实际类型。引用本身并不知道对象的类型
 
-## 3 装箱和拆箱
+## 4 装箱和拆箱
 
 ```csharp
 int i = 5;
@@ -76,9 +141,9 @@ int j = (int)o; // 拆箱
 
 **拆箱**时必须告诉编译器将 `object` 拆箱成什么类型。如果使用了错误的类型（比如 `o` 原先被装箱成 `unit` 或者 `long` ，或者根本就不是一个已装箱的值），就会抛出一个 `InvalidCastException` 异常。同样，拆箱也会复制箱内的值，在赋值之后，`j` 和该对象之间不再有任何关系。
 
-## 4 lambda
+## 5 lambda
 
-### 4.1 泛型委托类型
+### 5.1 泛型委托类型
 
 首先的了解一下泛型 `Func` 委托类型，其提供了一些提供了一些好用的预定义泛型类型
 
@@ -95,7 +160,7 @@ public delegate double SomeDelegate(int arg)
 
 如果想返回 `void` ，则可以使用 `Action<...>` 系列的委托
 
-### 4.2 lambda语法
+### 5.2 lambda语法
 
 ```csharp
 // 1
@@ -114,35 +179,6 @@ Func<string, int> func = (text) => text.Length;
 // eg:
 Func<string, int> func = text => text.Length;
 ```
-
-## 5 委托的本质
-
-委托本质实际上是一个密封类，继承自 `MulticastDelegate` ，它内部维护了一个字段，该字段指向一个或多个方法。这个字段是一个代表方法的引用
-+ `MulticastDelegate` ：即多播委托，一个委托可以装载多个相同签名的方法，委托被调用时，方法依次执行
-在 `System.Delegate` 当中有这四个成员变量
-
-```csharp
-// _target is the object we will invoke on
-internal object? _target; // Initialized by VM as needed; null if static delegate
-
-// MethodBase, either cached after first request or assigned from a DynamicMethod
-// For open delegates to collectible types, this may be a LoaderAllocator object
-internal object? _methodBase; // Initialized by VM as needed
-
-// _methodPtr is a pointer to the method we will invoke
-// It could be a small thunk if this is a static or UM call
-internal IntPtr _methodPtr;
-
-// In the case of a static method passed to a delegate, this field stores
-// whatever _methodPtr would have stored: and _methodPtr points to a
-// small thunk which removes the "this" pointer before going on
-// to _methodPtrAux.
-internal IntPtr _methodPtrAux;
-```
-
-其中，主要关注 `_target` 和 `_methodPtr` 两个数据成员
-+ `_target` ：表示要调用的对象，如果委托表示**实例方法**，则为当前委托对其调用实例方法的对象；如果委托表示**静态方法**，则为 `null`
-+ `_methodPtr` ：此变量的类型为 `IntPtr` ，在 `c#` 中是对指针的封装，一般来表示指针或者句柄，因此 `_methodPtr` 是一个指向将要调用的方法的指针
 
 ## 6 匿名方法中的捕获变量
 
