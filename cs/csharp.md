@@ -382,7 +382,7 @@ namespace csharp_test {
 	}
 }
 
-//访问或修改类型的实例字段myField
+// 访问或修改类型的实例字段myField
 MyClass myObj = new MyClass() { myField = 1 };
 Type myType = typeof(MyClass);                    // 获取类型
 Console.WriteLine(myType);                        // csharp_test.MyClass
@@ -392,14 +392,67 @@ int value = (int)fieldInfo.GetValue(myObj);
 Console.WriteLine(value);                         // 1
 fieldInfo.SetValue(myObj, 2);                     // 给实例字段赋值
 
-//访问或修改类型的静态字段 myStaticField
+// 访问或修改类型的静态字段 myStaticField
 Type myType = typeof(MyClass);
 FieldInfo staticFieldInfo = myType.GetField("myStaticField");
 Console.WriteLine(staticFieldInfo.GetValue(null)); // 0
 staticFieldInfo.SetValue(null, 2);
 Console.WriteLine(MyClass.myStaticField);          // 2
-
-
 ```
 
+### 8.2 访问或修改类型的实例、静态属性
 
+```csharp
+namespace csharp_test {
+	public class MyClass {
+		public int MyProperty { get; set; }
+		public static int MyStaticProperty { get; set; }
+	}
+}
+
+// 访问或修改类型的实例属性 MyProperty
+MyClass myObj = new MyClass() { MyProperty = 1 };
+Type myType = typeof(MyClass);
+PropertyInfo propertyInfo = myType.GetProperty("MyProperty");
+Console.WriteLine(propertyInfo);                      // Int32 MyProperty
+Console.WriteLine((int)propertyInfo.GetValue(myObj)); // 1
+propertyInfo.SetValue(myObj, 2);
+
+// 访问或修改类型的静态属性 MyStaticProperty
+Type myType = typeof(MyClass);
+PropertyInfo staticPropertyInfo = myType.GetProperty("MyStaticProperty");
+Console.WriteLine(staticPropertyInfo); // Int32 MyStaticProperty
+Console.WriteLine(staticPropertyInfo.GetValue(null)); // 2
+staticPropertyInfo.SetValue(null, 2);
+```
+
+**注意**：在使用反射给属性赋值的时候，如果该属性没有 `get` 访问器，则会抛出异常 `ArgumentException`
+
+### 8.3 调用类型的方法
+
+```csharp
+namespace csharp_test {
+	public class MyClass {
+		public void MyFunc(int num) {
+			Console.WriteLine($"call MyFunc, parameter: {num}"); ;
+		}
+
+		public static void MyStaticFunc(int num) {
+			Console.WriteLine($"call MyStaticFunc, parameter: {num}");
+		}
+	}
+}
+
+// 调用类型的实例方法 MyFunc
+MyClass myObj = new MyClass();
+Type myType = typeof(MyClass);
+MethodInfo methodInfo = myType.GetMethod("MyFunc");
+methodInfo.Invoke(myObj, new object[] { 10 });
+// call MyFunc, parameter: 10
+
+// 调用类型的实例方法 MyStaticFunc
+Type myType = typeof(MyClass);
+MethodInfo staticMethodInfo = myType.GetMethod("MyStaticFunc");
+staticMethodInfo.Invoke(null, new object[] { 20 });
+// call MyStaticFunc, parameter: 20
+```
