@@ -4,7 +4,7 @@
 + `Subscribe` 在接收到消息时执行注册的函数
 + `OnNext` 将收到的消息传递给Subscribe注册的函数并执行
 
-```c#
+```csharp
 Subject<string> subject = new Subject<string>();  
   
 subject.Subscribe(msg => Debug.Log("Subscribe1:" + msg + "\n"));  
@@ -32,15 +32,13 @@ Subscribe2:hello 003
 Subscribe3:hello 003
 ```
 
-![[Pasted image 20230930231317.png]]
-
 
 ## 2 一些示例
 
 每一个的 `AddTo(this)` 只是为了使其生命周期和脚本一样，其实就是在运行的时候挂载了一个 `Observable Destory Trigger` 脚本
 ### 2.1 计时器
 
-```c#
+```csharp
 Observable.Timer(TimeSpan.FromSeconds(2f))  
     .Subscribe(_ => {  
         Debug.Log("2s");  
@@ -50,7 +48,7 @@ Observable.Timer(TimeSpan.FromSeconds(2f))
 
 ### 2.2 Update
 
-```c#
+```csharp
 Observable.EveryUpdate()  
     .Subscribe(_ => {  
         Debug.Log("update");  
@@ -60,7 +58,7 @@ Observable.EveryUpdate()
 
 ### 2.3 Where
 
-```c#
+```csharp
 Observable.EveryUpdate()  
     .Where(_ => Input.GetMouseButtonDown(0))  
     .Subscribe(_ => {  
@@ -71,7 +69,7 @@ Observable.EveryUpdate()
 
 ### 2.4 每秒输出一次
 
-```c#
+```csharp
 Observable.EveryUpdate()  
     .Sample(TimeSpan.FromSeconds(1f))  
     .Subscribe(_ => {  
@@ -84,7 +82,7 @@ Observable.EveryUpdate()
 
 例如有一个 `int` 值，本来是希望在其改变时候输出一些日志
 
-```c#
+```csharp
 public class UniRxTest : MonoBehaviour  
 {  
     private ReactiveProperty<int> index = new ReactiveProperty<int>(1);  
@@ -112,7 +110,7 @@ public class UniRxTest : MonoBehaviour
 
 这样每次点击**鼠标左键**，都会去执行 `index` 订阅的消息，此处 `ReactiveProperty` 在使用 `1` 初始化值的时候也会去触发订阅的方法。可以使用 `Skip` 跳过第一次初始化
 
-```c#
+```csharp
 index  
     .Skip(1)  
     .Subscribe(_ => {  
@@ -126,7 +124,7 @@ index
 
 比如要在物体隐藏的时候输出日志
 
-```c#
+```csharp
 gameObject.OnDestroyAsObservable()  
     .Subscribe(unit => {  
         Debug.Log("Disable");  
@@ -142,7 +140,7 @@ gameObject.OnDestroyAsObservable()
 
 ### 4.1 事件流主动取消注册
 
-```c#
+```csharp
 public class UniRxTest : MonoBehaviour  
 {  
     public GameObject cube;  
@@ -164,7 +162,7 @@ public class UniRxTest : MonoBehaviour
 
 ### 4.2 AddTo
 
-```c#
+```csharp
 cube.UpdateAsObservable()  
     .Subscribe(_ => {  
         Debug.Log("update");  
@@ -175,7 +173,7 @@ cube.UpdateAsObservable()
 使用 `AddTo` 将这个事件流绑定到 `gameObject` 上面，当 `gameObject` 销毁时，也随之调用 `Dispose` 去释放绑定的事件
 
 同时也可以使用 `CompositeDisposable` 去管理事件流的生命周期 
-```c#
+```csharp
 public class UniRxTest : MonoBehaviour  
 {  
     public GameObject cube;  
@@ -212,7 +210,7 @@ public class UniRxTest : MonoBehaviour
 ## 5 Subject
 
 类似于泛型委托 `Action` ，可以像这样注册事件
-```c#
+```csharp
 public class UniRxTest : MonoBehaviour  
 {  
     private Subject<int> _subject = new Subject<int>();  
@@ -234,7 +232,7 @@ public class UniRxTest : MonoBehaviour
 
 ### 6.1 UnityEvent
 
-```c#
+```csharp
 public class UniRxTest : MonoBehaviour  
 {  
     private UnityEvent _unityEvent;  
@@ -254,7 +252,7 @@ public class UniRxTest : MonoBehaviour
 
 ### 6.2 event Action
 
-```c#
+```csharp
 public class UniRxTest : MonoBehaviour  
 {  
     private Action<int> _action;  
@@ -278,7 +276,7 @@ public class UniRxTest : MonoBehaviour
 
 ## 7 MessageBroker
 
-```c#
+```csharp
 /// <summary>  
 /// In-Memory PubSub filtered by Type.  
 /// </summary>  
