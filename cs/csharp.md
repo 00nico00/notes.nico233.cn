@@ -7,13 +7,13 @@
 + 必须调用（invoke）委托实例
 
 声明一个委托类型
-```c#
+```csharp
 delegate void StringProcessor(string input);
 ```
 其实际上是从 `System.MulticastDelegate` 派生的类型，后者又是从 `System.Delegate` 派生
 
 实例化委托
-```c#
+```csharp
 delegate void StringProcessor(string input);
 
 // 1
@@ -32,7 +32,7 @@ StringProcessor stringProcessor = (string input) => {
 ```
 
 调用委托
-```c#
+```csharp
 delegate void StringProcessor(string input);
 
 // 1
@@ -66,7 +66,7 @@ StringProcessor.Invoke("input_string");
 
 ## 3 装箱和拆箱
 
-```c#
+```csharp
 int i = 5;
 object o = i;   // 装箱
 int j = (int)o; // 拆箱
@@ -82,7 +82,7 @@ int j = (int)o; // 拆箱
 
 首先的了解一下泛型 `Func` 委托类型，其提供了一些提供了一些好用的预定义泛型类型
 
-```c#
+```csharp
 TResult Func<TResult>()
 TResult Func<T, TResult>(T arg)
 TResult Func<T1, T2, TResult>(T1 arg1, T2 arg2)
@@ -97,7 +97,7 @@ public delegate double SomeDelegate(int arg)
 
 ### 4.2 lambda语法
 
-```c#
+```csharp
 // 1
 ( /* 显示类型的参数列表 */ ) => { /* 语句 */ }
 
@@ -121,7 +121,7 @@ Func<string, int> func = text => text.Length;
 + `MulticastDelegate` ：即多播委托，一个委托可以装载多个相同签名的方法，委托被调用时，方法依次执行
 在 `System.Delegate` 当中有这四个成员变量
 
-```c#
+```csharp
 // _target is the object we will invoke on
 internal object? _target; // Initialized by VM as needed; null if static delegate
 
@@ -146,7 +146,7 @@ internal IntPtr _methodPtrAux;
 
 ## 6 匿名方法中的捕获变量
 
-```c#
+```csharp
 string str = "111";
 
 var x = delegate () {
@@ -173,7 +173,7 @@ x();
 
 捕获变量能简化避免专门创建一些类来存储一个委托需要处理的信息（除了作为参数传递的信息之外）。
 如以下例子：**假定你有一个人物列表，并希望写一个方法来返回包含低于特定年龄的所有人的另一个列表。**
-```c#
+```csharp
 List<Person> FindAllPersonYoungerThan(List<Person> people, int limit) {
 	return people.FindAll(delegate(Person person) {
 		person.Age < limit;
@@ -184,7 +184,7 @@ List<Person> FindAllPersonYoungerThan(List<Person> people, int limit) {
 ### 6.2 延长变量的生存期
 
 规则：对于一个捕获变量，只要还有任何委托实例在引用它，它就会一直存在。
-```c#
+```csharp
 static Action CreateDelegateInstance() {
 	int counter = 5;
 
@@ -206,7 +206,7 @@ x(); // output 7
 
 #### 6.2.1 使用多个委托来捕捉多个变量实例
 
-```c#
+```csharp
 List<Action> list = new List<Action>();
 
 for (int index = 0; index < 5; index++) {
@@ -234,7 +234,7 @@ list[1](); // 11
 ### 7.1 手写迭代器
 
 首先给出 `IEnumerable` 和 `IEnumerator` 的定义
-```c#
+```csharp
 // IEnumerable
 public interface IEnumerable {
 	IEnumerator GetEnumerator();
@@ -251,7 +251,7 @@ public interface IEnumerator {
 ```
 
 此处我们以嵌套类的形式实现这些接口，即可实现最简单的手写迭代器
-```c#
+```csharp
 class IterationSample : IEnumerable {
 	object[] values;
 	int startingPoint;
@@ -309,7 +309,7 @@ foreach (var val in collection) {
 ### 7.2 使用 yield 简化迭代器
 
 我们可以使用如下代码替换上面的 `GetEnumerator()` 及 `IterationSampleIterator`
-```c#
+```csharp
 public IEnumerator GetEnumerator() {
 	for (int index = 0; index < values.Length; index++) {
 		yield return values[(index + startingPoint) % values.Length];
