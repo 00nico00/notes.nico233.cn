@@ -1,4 +1,4 @@
-## 1.c＃gc的触发条件有哪些，如何避免频繁gc，如何手动控制gc
+## 1. 异步操作转化为 unitask
 
 ### 1.1 异步加载资源
 
@@ -68,3 +68,4 @@ TargetText.text = ((TextAsset) (await asyncUnitaskLoader.LoadAsync<TextAsset>("t
 
 ### 1.2 异步加载场景
 
+## 2.xxxxxxxxxxx
