@@ -9,6 +9,7 @@ private async void OnClickLoadText()
     var text = await loadOperation;  
   
     TargetText.text = ((TextAsset) text).text; 
+}
 ```
 
 此处的 `loadOperation` 是一个 `ResourceRequest` ，而 `ResourceRequest` 其实就是一个异步操作 （ 继承自 `AsyncOperation`  ）。接着此处使用 `await` ，就会将其转换为 `Unitask` 的 `awaiter` 。代码如下：
