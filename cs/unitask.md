@@ -68,4 +68,61 @@ TargetText.text = ((TextAsset) (await asyncUnitaskLoader.LoadAsync<TextAsset>("t
 
 ### 1.2 异步加载场景
 
-## 2.xxxxxxxxxxx
+```csharp
+private async void OnClickLoadScene()  
+{  
+    await SceneManager.LoadSceneAsync("UniTaskTutorial/BaseUsing/Scenes/TargetLoadScene").ToUniTask(  
+        (Progress.Create<float>(  
+            (p) =>  
+            {  
+                LoadSceneSlider.value = p;  
+                if (ProgressText != null)  
+                {  
+                    ProgressText.text = $"读取进度{p * 100:F2}%";  
+                }  
+            })));  
+}
+```
+
+此处的代码示例目的是异步加载一个场景，并且获取其加载进度反应到进度条上面。
+
+此处将这个异步操作转换为 `UniTask` 之后，在其中添加一个回调 `Progress.Create<float>` ，即可拿到这个场景加载的进度。
+
+### 1.3 网络请求的异步操作
+
+```csharp
+private async void OnClickWebRequest()  
+{  
+    var webRequest =  
+        UnityWebRequestTexture.GetTexture(  
+            "https://s1.hdslb.com/bfs/static/jinkela/video/asserts/33-coin-ani.png");  
+    var result = (await webRequest.SendWebRequest());  
+    var texture = ((DownloadHandlerTexture) result.downloadHandler).texture;  
+    int totalSpriteCount = 24;  
+    int perSpriteWidth = texture.width / totalSpriteCount;  
+    Sprite[] sprites = new Sprite[totalSpriteCount];  
+    for (int i = 0; i < totalSpriteCount; i++)  
+    {  
+        sprites[i] = Sprite.Create(texture,  
+            new Rect(new Vector2(perSpriteWidth * i, 0), new Vector2(perSpriteWidth, texture.height)),  
+            new Vector2(0.5f, 0.5f));  
+    }  
+    float perFrameTime = 0.1f;  
+    while (true)  
+    {  
+        for (int i = 0; i < totalSpriteCount; i++)  
+        {  
+            await Cysharp.Threading.Tasks.UniTask.Delay(TimeSpan.FromSeconds(perFrameTime));  
+            var sprite = sprites[i];  
+            DownloadImage.sprite = sprite;  
+        }  
+    }  
+}
+```
+此处的 `await` 其实也是在获得一个 `UnityWebRequestAsyncOperationAwaiter` ，和第一个加载资源的操作也是有异曲同工之妙了。
+
+代码中间部分就是一个很简单的分割图片的算法。
+
+代码最后的循环是将每帧 `sprite` 依次赋值，构成类似于动画的样子。此处虽然是死循环，但是有 `await` 因此是非阻塞的完全没问题。
+
+## 2.Delay & Wait
