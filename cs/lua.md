@@ -68,3 +68,43 @@ g, l = 20, 30
 ## 2.1 type函数
 
 `lua` 提供一个 `type` 函数来使得我们知道变量的类型
+```lua
+print(type("This is a string")) -- string
+local t = 10
+print(type(5.8 * 10))           -- number
+print(type(true))               -- boolean
+print(type(print))              -- function
+print(type(type))               -- function
+print(type(nil))                -- nil
+print(type(type(ABC)))          -- string
+```
+
+注意：变量在初始化或赋值前，都指向 `nil` 。`lua` 中空字符串和 0  在条件检查时都被当作 `true`
+
+# 3. 操作符
+
+## 3.1 算术运算操作符
+
+此处只说明比较特殊的，不包括 `+` ,  `-` , `*` , `%`
+```lua
+local a, b = 10, 20
+print(a ^ 2) -- 100.0 幂操作符
+print(-a)    -- -10   一元减操作符用于取反
+```
+
+## 3.2 关系运算符
+
+```lua
+-- ~= ：就是 == 运算符的反面，相等为假，否则为真
+print(10 ~= 20) -- false
+```
+
+## 3.3 逻辑运算符
+
+`and` 代替了 `&&` ，`or` 代替了 `||` ，`not` 代替 `!`
+
+## 4.4 其它操作符
+
+```lua
+
+```
