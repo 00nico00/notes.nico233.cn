@@ -106,5 +106,80 @@ print(10 ~= 20) -- false
 ## 4.4 其它操作符
 
 ```lua
+-- 1 .. 用于连接两个字符串
+print("hello".."world") -- helloworld
 
+-- 2 # 返回 string 或者 table 的长度
+print(#"hello") -- 5
+```
+
+# 4. 循环
+
+## 4.1 while
+
+```lua
+while (condition) do
+	statement(s)
+end
+
+-- eg:
+local a = 1;
+while a < 5 do
+    print(a)
+    a = a + 1
+end
+```
+
+## 4.2 for
+
+```lua
+for init, max/min value, increment do
+	statement(s)
+end
+
+-- eg:
+for i = 1, 10, 1 do
+    print(i)
+end
+
+for i = 10, 1, -1 do
+    print(i)
+end
+```
+
+以上两个例子等价于 `c++` 当中的：
+
+```cpp
+for (int i = 1; i <= 10; i++) {
+	std::cout << i << std::endl;
+}
+
+for (int i = 10; i >= 1; i--) {
+	std::cout << i << std::endl;
+}
+```
+
+## 4.3 repeat...until
+
+```lua
+repeat
+	statement(s)
+until (condition)
+
+-- eg: 其实就是相当于其他语言的 do while
+local a = 1
+repeat
+    print(a)
+    a = a - 1
+until (a < 1)
+```
+
+# 5. if
+
+在 `lua` 当中，所有**布尔真**和**非 `nil`** 都当为 `true` ，把所有**布尔假**和 `nil` 当作假，注意，**0 会被当作真。**
+
+```lua
+if (boolean_expression) then
+	statement(s)
+end
 ```
