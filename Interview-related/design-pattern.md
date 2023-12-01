@@ -10,23 +10,23 @@
 给出如下一个场景：
 ```csharp
 public class Book {
-	public string GetContent() {
-		return "书的内容";
-	}
+    public string GetContent() {
+        return "书的内容";
+    }
 }
 
 public class Mother {
-	public void say(Book book) {
-		Debug.log(book.GetContent());
-	}
+    public void say(Book book) {
+        Debug.log(book.GetContent());
+    }
 }
 ```
 妈妈给孩子讲故事，拿到一本书就可以照着书读了，但是突然有一天给了她报纸
 ```csharp
 public class Newspaper {
-	public string GetContent() {
-		return "报纸的内容";
-	}
+    public string GetContent() {
+        return "报纸的内容";
+    }
 }
 ```
 虽然此时，报纸和书本都有 `GetContent` 也就是妈妈都能知道这个文本载体的文本是什么。但是此处，拿到报纸并不能读出来，这是很难理解的事情。此时 `Mother` 就是高层模块，可以读的文本就是底层模块，此处 `Mother` 直接依赖于 `Book` ，就违反了依赖反转原则。因此我们就需要定义一个 `IReader` 接口，来防止这种高层模块和低层模块的强依赖关系。
