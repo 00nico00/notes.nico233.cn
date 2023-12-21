@@ -435,6 +435,51 @@ world
 ]]
 ```
 
+## 9.4 ipairs 和 pairs
+
++ `ipairs` ：在遍历的时候只会从下标 `1` 开始，直到遍历到 `nil` 时结束
++ `pairs` ：遍历 table 中所有的非 `nil` 值
+```lua
+local a = { [-1] = -1, 1, '2', nil, ['key'] = 'value', 6, [7] = 'end', ['kex'] = 'value2' }
+
+for k, v in ipairs(a) do
+    print(k, v)
+end
+--[[
+1       1
+2       2
+]]
+
+for k, v in pairs(a) do
+    print(k, v)
+end
+--[[
+1       1
+2       2
+4       6
+7       end
+key     value
+kex     value2
+-1      -1
+]]
+```
+
+// TODO：标记一下，此处发现貌似使用 `ipairs` 输出之后，`pairs`  再输出会不一样
+
+```lua
+local a = { [1] = "hello", 2, [3] = 3, 4, 5 }
+for k, v in ipairs(a) do
+    print(k, v)
+end
+
+--[[
+结果：
+1       2
+2       4
+3       5
+]]
+```
+
 # 10. 表
 
 `lua` 中，表是唯一可以用来创建不同数据类型的数据结构，比如常见的数组和字典。
