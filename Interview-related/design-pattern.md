@@ -120,4 +120,5 @@ public class B : Interface1, Interface3 {
 ```
 
 ## 2.unity不同脚本去实现单例模式，那么这个同步会被破坏的情况怎么解决?
-使用private构造函数，防止外部脚本直接实例化
+
+使用 private 构造函数，防止外部脚本直接实例化
