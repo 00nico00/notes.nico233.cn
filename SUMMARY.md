@@ -23,5 +23,5 @@
 
 ## 🏫 CQJTU
 
-+ [OS](CQJTU/OS.md)
++ [OS](os.md)
 
