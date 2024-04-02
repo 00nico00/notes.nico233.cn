@@ -23,3 +23,6 @@
 + 分帧操作，将这个生成预制体（UI）的操作使用协程均摊到很多帧。
 
 ## 5.List 和 ArrayList 区别
+test
+
+## 6.讲一下 unity 的 Resources 文件夹打包策略
